@@ -1,36 +1,43 @@
 var exec = require('child_process').exec;
 var urls = require('./config/urls.json').urls;
-var batchSize = 30;
+var batchSize = 31;
 async function exe(){
 var proms = [];
-  // for(var i = 0; i < urls.length; i++){
-  for(var i = 0; i < batchSize + 1; i++){
+function promiseFromChildProcess(child) {
+  return new Promise(function (resolve, reject) {
+      child.addListener("error", reject);
+      child.addListener("exit", resolve);
+  });
+}
+// for(var i = 0; i < urls.length; i++){
+  for(var i = 0; i < batchSize; i++){
     if(i > 0 && i%10 == 0){
       console.log(`aguardando`);
       await Promise.all(proms);
       proms = [];
-      console.log(`fim das ${i*batchSize} tasks`);
-      await exec(`sudo docker stop $(sudo docker ps -a -q)`, function(error, stdout, stderr) {
+      await promiseFromChildProcess(exec(`sudo docker stop $(sudo docker ps -a -q)`, function(error, stdout, stderr) {
         if (error) {
           console.log(error.code);
         }
         console.log(stdout);
-      })
-      await exec(`sudo docker rm $(sudo docker ps -a -q)`, function(error, stdout, stderr) {
+        console.log(`fim docker stop`);
+      }));
+      await promiseFromChildProcess(exec(`sudo docker rm $(sudo docker ps -a -q)`, function(error, stdout, stderr) {
         if (error) {
           console.log(error.code);
         }
         console.log(stdout);
-      })
+        console.log(`fim docker remove`);
+      }))
     }
     // else{
       console.log(`Docker ${i}/${urls[i]}`)
-      proms.push(exec(`sudo docker run -d -t -i -e BARRAMENTO=${urls[i]} levismad/crawler`, function(error, stdout, stderr) {
+      proms.push(promiseFromChildProcess(exec(`sudo docker run -d -t -i -e BARRAMENTO=${urls[i]} levismad/crawler`, function(error, stdout, stderr) {
         if (error) {
           console.log(error.code);
         }
         console.log(stdout);
-      }));
+      })));
     // }
   }
   console.log(`aguardando`);
