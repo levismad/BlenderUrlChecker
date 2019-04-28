@@ -2,7 +2,6 @@ var Crawler = require("crawler");
 require('./config/config');
 var {mongoose} = require('./db/mongoose');
 const {Site} = require('./models/site');
-// var urls = require('./config/urls.json').urls;
 var destect = ["compre", "agora","produto","frete","R\\$","promo..o"];
 var current = 0;
 var sitios = [];
