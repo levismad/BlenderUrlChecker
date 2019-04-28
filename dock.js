@@ -32,7 +32,7 @@ function promiseFromChildProcess(child) {
     }
     // else{
       console.log(`Docker ${i}/${urls[i]}`)
-      proms.push(promiseFromChildProcess(exec(`sudo docker run -d -t -i -e BARRAMENTO=${urls[i]} levismad/crawler`, function(error, stdout, stderr) {
+      proms.push(promiseFromChildProcess(exec(`sudo docker run -t -i -e BARRAMENTO=${urls[i]} levismad/crawler`, function(error, stdout, stderr) {
         if (error) {
           console.log(error.code);
         }
