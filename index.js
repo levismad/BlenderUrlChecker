@@ -16,8 +16,7 @@ var c = new Crawler({
             body.Online = false;
             body.RegexRule = destect.join(",");
             
-            sitios.push(body)
-            done();
+            sitios.push(body);
         }else{
             var $ = res.$;
             var body = {};
@@ -31,25 +30,33 @@ var c = new Crawler({
             body.Products = [];
             body.Online = true;
 
-            for(var i in destect){
-                var v = destect[i];
-                var regex = new RegExp(`.*${v}.*`, "gi");
-                body.MatchCount = body.MatchCount + ((($('body').html() || "").match(regex) || []).length);
-            };
-
-            if(body.StatusCode >= 200 && body.StatusCode < 400){
-                var products = $('a').filter(function(i,v) {
-                    // console.log($(this).attr("href"));
-                    return ($(this).attr("href") || "").indexOf("/products") > -1;
-                });
-                
-                for(var i = 0; i < products.length; i++){
-                    body.Products.push($(products[i]).html());
+            try{
+                for(var i in destect){
+                    var v = destect[i];
+                    var regex = new RegExp(`.*${v}.*`, "gi");
+                    body.MatchCount = body.MatchCount + ((($('body').html() || "").match(regex) || []).length);
+                };
+    
+                if(body.StatusCode >= 200 && body.StatusCode < 400){
+                    var products = $('a').filter(function(i,v) {
+                        // console.log($(this).attr("href"));
+                        return ($(this).attr("href") || "").indexOf("/products") > -1;
+                    });
+                    
+                    for(var i = 0; i < products.length; i++){
+                        body.Products.push($(products[i]).html());
+                    }
                 }
             }
-            sitios.push(body);
-            done();
+            catch(e){
+
+            }
+            finally{                
+                sitios.push(body);
+            }
+
         }
+        done();
     }
 });
 
@@ -64,13 +71,17 @@ var c = new Crawler({
 // }
 c.on('drain',async function(){
     console.log("done queue");
-    save();
+    await save();
 });
 
 async function save(){
  for(var i = 0; i < sitios.length; i++){
      console.log("saving " + i)
-     await saveOne(sitios[i]);
+     try {
+         await saveOne(sitios[i]);
+     } catch (error) {
+         
+     }
  }
  mongoose.connection.close();
 }
