@@ -3,6 +3,14 @@ var urls = require('./config/urls.json').urls;
 var batchSize = 31;
 async function exe(){
 var proms = [];
+async function execWithLog(command){
+  await promiseFromChildProcess(exec(command, function(error, stdout, stderr) {
+    if (error) {
+      console.log(error.code);
+    }
+    console.log(stdout);
+  }));
+}
 function promiseFromChildProcess(child) {
   return new Promise(function (resolve, reject) {
       child.addListener("error", reject);
@@ -15,47 +23,20 @@ function promiseFromChildProcess(child) {
       console.log(`aguardando`);
       await Promise.all(proms);
       proms = [];
-      await promiseFromChildProcess(exec(`sudo docker stop $(sudo docker ps -a -q)`, function(error, stdout, stderr) {
-        if (error) {
-          console.log(error.code);
-        }
-        console.log(stdout);
-        console.log(`fim docker stop`);
-      }));
-      await promiseFromChildProcess(exec(`sudo docker rm $(sudo docker ps -a -q)`, function(error, stdout, stderr) {
-        if (error) {
-          console.log(error.code);
-        }
-        console.log(stdout);
-        console.log(`fim docker remove`);
-      }));
+      await execWithLog(`sudo docker stop $(sudo docker ps -a -q)`);
+      await execWithLog(`sudo docker rm $(sudo docker ps -a -q)`);
     }
     // else{
-      console.log(`Docker ${i}/${urls[i]}`)
-      proms.push(promiseFromChildProcess(exec(`sudo docker run -t -i -e BARRAMENTO=${urls[i]} levismad/crawler`, function(error, stdout, stderr) {
-        if (error) {
-          console.log(error.code);
-        }
-        console.log(stdout);
-      })));
+      console.log(`Docker ${i}/${urls[i]}`);
+      await execWithLog(`sudo docker run -t -i -e BARRAMENTO=${urls[i]} levismad/crawler`);
     // }
   }
   console.log(`finalizando ultimas tasks`);
   await Promise.all(proms);
   
-  await promiseFromChildProcess(exec(`sudo docker stop $(sudo docker ps -a -q)`, function(error, stdout, stderr) {
-    if (error) {
-      console.log(error.code);
-    }
-    console.log(stdout);
-    console.log(`fim docker stop`);
-  }));
-  await promiseFromChildProcess(exec(`sudo docker rm $(sudo docker ps -a -q)`, function(error, stdout, stderr) {
-    if (error) {
-      console.log(error.code);
-    }
-    console.log(stdout);
-    console.log(`fim docker remove`);
-  }));
+  await execWithLog(`sudo docker stop $(sudo docker ps -a -q)`);
+  await execWithLog(`sudo docker rm $(sudo docker ps -a -q)`);
 }
-exe().then(function(){ console.log("done"); }).catch(function(){ console.log("done error"); });
+// exe().then(function(){ console.log("done"); }).catch(function(){ console.log("done error"); });
+execWithLog('sudo docker run -t -i -e BARRAMENTO=https://www.001skincare.com/collections/all?sort_by=best-selling levismad/crawler')
+.then(function(){ console.log("done"); }).catch(function(){ console.log("done error"); });
