@@ -26,7 +26,7 @@ var proms = [];
     }
     // else{
       console.log(`Docker ${i}/${urls[i]}`);
-      await execWithLog(`sudo docker run -e BARRAMENTO=${urls[i]} levismad/crawler`);
+      await execWithLog(`sudo docker run-e BARRAMENTO=${urls[i]} levismad/crawler`);
     // }
   }
   console.log(`finalizando ultimas tasks`);
@@ -37,4 +37,4 @@ var proms = [];
 }
 // exe().then(function(){ console.log("done"); }).catch(function(){ console.log("done error"); });
 execWithLog('sudo docker run -t -i -e BARRAMENTO=https://www.001skincare.com/collections/all?sort_by=best-selling levismad/crawler')
-.then(function(){ console.log("done"); }).catch(function(){ console.log("done error"); });
+.then(function(){ console.log("done"); }).catch(function(e){ console.log(e); });
