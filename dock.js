@@ -1,21 +1,22 @@
 var exec = require('child_process').exec;
 var urls = require('./config/urls.json').urls;
-var batchSize = 10;
+var batchSize = 30;
 async function exe(){
 var proms = [];
   // for(var i = 0; i < urls.length; i++){
   for(var i = 0; i < batchSize + 1; i++){
-    if(i%100 == 0){
+    if(i > 0 && i%10 == 0){
       console.log(`aguardando`);
       await Promise.all(proms);
+      proms = [];
       console.log(`fim das ${i*batchSize} tasks`);
-      exec(`sudo docker stop $(sudo docker ps -a -q)`, function(error, stdout, stderr) {
+      await exec(`sudo docker stop $(sudo docker ps -a -q)`, function(error, stdout, stderr) {
         if (error) {
           console.log(error.code);
         }
         console.log(stdout);
       })
-      exec(`sudo docker rm $(sudo docker ps -a -q)`, function(error, stdout, stderr) {
+      await exec(`sudo docker rm $(sudo docker ps -a -q)`, function(error, stdout, stderr) {
         if (error) {
           console.log(error.code);
         }
@@ -36,4 +37,4 @@ var proms = [];
   await Promise.all(proms);
   console.log(`fim das ${i*batchSize} tasks`);
 }
-exe();
+exe().then(function(){ console.log("done"); }).catch(function(){ console.log("done error"); });
