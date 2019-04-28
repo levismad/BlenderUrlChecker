@@ -35,6 +35,4 @@ var proms = [];
   await execWithLog(`sudo docker stop $(sudo docker ps -a -q)`);
   await execWithLog(`sudo docker rm $(sudo docker ps -a -q)`);
 }
-// exe().then(function(){ console.log("done"); }).catch(function(){ console.log("done error"); });
-execWithLog('sudo docker run -t -i -e BARRAMENTO=https://www.001skincare.com/collections/all?sort_by=best-selling levismad/crawler')
-.then(function(){ console.log("done"); }).catch(function(e){ console.log(e); });
+exe().then(function(){ console.log("done"); }).catch(function(e){ console.log(e); });
