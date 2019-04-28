@@ -1,8 +1,7 @@
 var exec = require('child_process').exec;
 var urls = require('./config/urls.json').urls;
 var batchSize = 31;
-async function exe(){
-var proms = [];
+
 async function execWithLog(command){
   await promiseFromChildProcess(exec(command, function(error, stdout, stderr) {
     if (error) {
@@ -17,6 +16,9 @@ function promiseFromChildProcess(child) {
       child.addListener("exit", resolve);
   });
 }
+
+async function exe(){
+var proms = [];
 // for(var i = 0; i < urls.length; i++){
   for(var i = 0; i < batchSize; i++){
     if(i > 0 && i%10 == 0){
