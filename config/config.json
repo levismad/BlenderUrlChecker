@@ -1,0 +1,8 @@
+{
+  "test": {
+    "MONGODB_URI": "*"
+  },
+  "development": {
+    "MONGODB_URI": "*"
+  }
+}

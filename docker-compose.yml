@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  crawler:
+    image: levismad/crawler
+    environment:
+      - BARRAMENTO=https://www.001skincare.com/collections/all?sort_by=best-selling
+    build:
+      context: .
+      dockerfile: Dockerfile
+    networks:
+      - backend
+    deploy:
+      mode: replicated
+      replicas: 1
+      update_config:
+        parallelism: 1
+networks:
+  backend:
