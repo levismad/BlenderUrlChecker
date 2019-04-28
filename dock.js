@@ -1,35 +1,17 @@
 const util = require('util');
 const exec = util.promisify(require('child_process').exec);
 
-async function main(command) {
+async function execWithLog(command) {
   const { stdout, stderr } = await exec(command);
 
-  if (stderro) {
+  if (stderr) {
     console.error(`error: ${stderr}`);
   }
   console.log(`Number of files ${stdout}`);
 }
 
-main('sudo docker run -t -i -e BARRAMENTO=https://www.001skincare.com/collections/all?sort_by=best-selling levismad/crawler')
-.then(function(){ console.log("done"); }).catch(function(){ console.log("done error"); });
-/*
 var urls = require('./config/urls.json').urls;
-var batchSize = 31;
-
-async function execWithLog(command){
-  await promiseFromChildProcess(exec(command, function(error, stdout, stderr) {
-    if (error) {
-      console.log(error.code);
-    }
-    console.log(stdout);
-  }));
-}
-function promiseFromChildProcess(child) {
-  return new Promise(function (resolve, reject) {
-      child.addListener("error", reject);
-      child.addListener("exit", resolve);
-  });
-}
+var batchSize = 1;
 
 async function exe(){
 var proms = [];
@@ -44,7 +26,7 @@ var proms = [];
     }
     // else{
       console.log(`Docker ${i}/${urls[i]}`);
-      await execWithLog(`sudo docker run -t -i -e BARRAMENTO=${urls[i]} levismad/crawler`);
+      await execWithLog(`sudo docker run -e BARRAMENTO=${urls[i]} levismad/crawler`);
     // }
   }
   console.log(`finalizando ultimas tasks`);
@@ -55,4 +37,4 @@ var proms = [];
 }
 // exe().then(function(){ console.log("done"); }).catch(function(){ console.log("done error"); });
 execWithLog('sudo docker run -t -i -e BARRAMENTO=https://www.001skincare.com/collections/all?sort_by=best-selling levismad/crawler')
-.then(function(){ console.log("done"); }).catch(function(){ console.log("done error"); });*/
+.then(function(){ console.log("done"); }).catch(function(){ console.log("done error"); });
