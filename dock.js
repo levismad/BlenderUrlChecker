@@ -28,7 +28,7 @@ function promiseFromChildProcess(child) {
         }
         console.log(stdout);
         console.log(`fim docker remove`);
-      }))
+      }));
     }
     // else{
       console.log(`Docker ${i}/${urls[i]}`)
@@ -40,8 +40,22 @@ function promiseFromChildProcess(child) {
       })));
     // }
   }
-  console.log(`aguardando`);
+  console.log(`finalizando ultimas tasks`);
   await Promise.all(proms);
-  console.log(`fim das ${i*batchSize} tasks`);
+  
+  await promiseFromChildProcess(exec(`sudo docker stop $(sudo docker ps -a -q)`, function(error, stdout, stderr) {
+    if (error) {
+      console.log(error.code);
+    }
+    console.log(stdout);
+    console.log(`fim docker stop`);
+  }));
+  await promiseFromChildProcess(exec(`sudo docker rm $(sudo docker ps -a -q)`, function(error, stdout, stderr) {
+    if (error) {
+      console.log(error.code);
+    }
+    console.log(stdout);
+    console.log(`fim docker remove`);
+  }));
 }
 exe().then(function(){ console.log("done"); }).catch(function(){ console.log("done error"); });
