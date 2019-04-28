@@ -9,8 +9,20 @@ var proms = [];
       console.log(`aguardando`);
       await Promise.all(proms);
       console.log(`fim das ${i*batchSize} tasks`);
+      exec(`sudo docker stop $(sudo docker ps -a -q)`, function(error, stdout, stderr) {
+        if (error) {
+          console.log(error.code);
+        }
+        console.log(stdout);
+      })
+      exec(`sudo docker rm $(sudo docker ps -a -q)`, function(error, stdout, stderr) {
+        if (error) {
+          console.log(error.code);
+        }
+        console.log(stdout);
+      })
     }
-    else{
+    // else{
       console.log(`Docker ${i}/${urls[i]}`)
       proms.push(exec(`sudo docker run -d -t -i -e BARRAMENTO=${urls[i]} levismad/crawler`, function(error, stdout, stderr) {
         if (error) {
@@ -18,6 +30,10 @@ var proms = [];
         }
         console.log(stdout);
       }));
-    }
+    // }
   }
+  console.log(`aguardando`);
+  await Promise.all(proms);
+  console.log(`fim das ${i*batchSize} tasks`);
 }
+exe();
