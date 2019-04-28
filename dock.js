@@ -1,4 +1,18 @@
-var exec = require('child_process').exec;
+const util = require('util');
+const exec = util.promisify(require('child_process').exec);
+
+async function main(command) {
+  const { stdout, stderr } = await exec(command);
+
+  if (stderro) {
+    console.error(`error: ${stderr}`);
+  }
+  console.log(`Number of files ${stdout}`);
+}
+
+main('sudo docker run -t -i -e BARRAMENTO=https://www.001skincare.com/collections/all?sort_by=best-selling levismad/crawler')
+.then(function(){ console.log("done"); }).catch(function(){ console.log("done error"); });
+/*
 var urls = require('./config/urls.json').urls;
 var batchSize = 31;
 
@@ -41,4 +55,4 @@ var proms = [];
 }
 // exe().then(function(){ console.log("done"); }).catch(function(){ console.log("done error"); });
 execWithLog('sudo docker run -t -i -e BARRAMENTO=https://www.001skincare.com/collections/all?sort_by=best-selling levismad/crawler')
-.then(function(){ console.log("done"); }).catch(function(){ console.log("done error"); });
+.then(function(){ console.log("done"); }).catch(function(){ console.log("done error"); });*/
