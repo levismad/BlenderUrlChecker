@@ -11,13 +11,13 @@ async function execWithLog(command) {
 }
 
 var urls = require('./config/urls.json').urls;
-var batchSize = 1;//urls.length;
+var batchSize = urls.length/1000;
 
 async function exe(){
 var proms = [];
 // for(var i = 0; i < urls.length; i++){
   for(var i = 0; i < batchSize; i++){
-    if(i > 0 && i%10 == 0){
+    if(i > 0 && i%4 == 0){
       console.log(`aguardando`);
       await Promise.all(proms);
       proms = [];
@@ -26,7 +26,7 @@ var proms = [];
     }
     // else{
       console.log(`Docker ${i}/${urls[i]}`);
-      proms.push(execWithLog(`sudo docker run -e BARRAMENTO=${i},${i*100} levismad/crawler`));
+      proms.push(execWithLog(`sudo docker run -e BARRAMENTO=${i*1000},${(i+1)*1000} levismad/crawler`));
     // }
   }
   console.log(`finalizando ultimas tasks`);
