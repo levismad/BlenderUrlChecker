@@ -11,7 +11,7 @@ async function execWithLog(command) {
 }
 
 var urls = require('./config/urls.json').urls;
-var batchSize = 1;
+var batchSize = 1;//urls.length;
 
 async function exe(){
 var proms = [];
@@ -26,7 +26,7 @@ var proms = [];
     }
     // else{
       console.log(`Docker ${i}/${urls[i]}`);
-      await execWithLog(`sudo docker run-e BARRAMENTO=${urls[i]} levismad/crawler`);
+      proms.push(execWithLog(`sudo docker run -e BARRAMENTO=${i},${i*100} levismad/crawler`));
     // }
   }
   console.log(`finalizando ultimas tasks`);

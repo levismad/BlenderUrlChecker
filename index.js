@@ -2,10 +2,13 @@ var Crawler = require("crawler");
 require('./config/config');
 var {mongoose} = require('./db/mongoose');
 const {Site} = require('./models/site');
+var urls = require('./config/urls.json').urls;
 var destect = ["compre", "agora","produto","frete","R\\$","promo..o"];
 var current = 0;
 var sitios = [];
-var url = process.env.BARRAMENTO;
+// var url = process.env.BARRAMENTO;
+var omega = process.env.BARRAMENTO.split(",");
+console.log(omega);
 var c = new Crawler({
     maxConnections : 10000,
     callback : function (error, res, done) {
@@ -60,15 +63,16 @@ var c = new Crawler({
     }
 });
 
-// for(var i = 0 ; i < 100; i++){
+for(var i = omega[0] ; i < omega[1]; i++){
     // Queue URLs with custom callbacks & parameters
     c.queue([{
-        uri: url,
+        // uri: url,
+        uri: urls[i],
         jQuery: true,
         userAgent: "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1",
         retries: 0
     }]);
-// }
+}
 c.on('drain',async function(){
     console.log("done queue");
     await save();
