@@ -32,14 +32,14 @@ var c = new Crawler({
             body.StatusMessage = res.statusMessage;
             body.Products = [];
             body.Online = true;
-
+            
             try{
                 for(var i in destect){
                     var v = destect[i];
                     var regex = new RegExp(`.*${v}.*`, "gi");
                     body.MatchCount = body.MatchCount + ((($('body').html() || "").match(regex) || []).length);
                 };
-    
+                
                 if(body.StatusCode >= 200 && body.StatusCode < 400){
                     var products = $('a').filter(function(i,v) {
                         // console.log($(this).attr("href"));
@@ -52,26 +52,27 @@ var c = new Crawler({
                 }
             }
             catch(e){
-
+                
             }
             finally{                
                 sitios.push(body);
             }
-
+            
         }
         done();
     }
 });
 
 for(var i = omega[0] ; i < omega[1]; i++){
-    // Queue URLs with custom callbacks & parameters
-    c.queue([{
-        // uri: url,
-        uri: urls[i],
-        jQuery: true,
-        userAgent: "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1",
-        retries: 0
-    }]);
+    if(!!urls[i]){
+        c.queue([{
+            // uri: url,
+            uri: urls[i],
+            jQuery: true,
+            userAgent: "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1",
+            retries: 0
+        }]);
+    }
 }
 c.on('drain',async function(){
     console.log("done queue");
@@ -79,15 +80,15 @@ c.on('drain',async function(){
 });
 
 async function save(){
- for(var i = 0; i < sitios.length; i++){
-     console.log("saving " + i)
-     try {
-         await saveOne(sitios[i]);
-     } catch (error) {
-         
-     }
- }
- mongoose.connection.close();
+    for(var i = 0; i < sitios.length; i++){
+        console.log("saving " + i)
+        try {
+            await saveOne(sitios[i]);
+        } catch (error) {
+            
+        }
+    }
+    mongoose.connection.close();
 }
 function saveOne(body){
     let site = new Site(body);
