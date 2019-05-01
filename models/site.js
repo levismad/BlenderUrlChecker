@@ -36,6 +36,10 @@ var SiteSchema = new mongoose.Schema({
     Online:{
         type: Boolean,
         required: false        
+    },
+    Error:{
+        type: String,
+        required: false
     }
 });
 

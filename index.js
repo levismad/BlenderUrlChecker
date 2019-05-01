@@ -17,7 +17,7 @@ var c = new Crawler({
             body.Url = res.options.uri;
             body.Online = false;
             body.RegexRule = destect.join(",");
-            
+            body.Error = JSON.stringify(error);
             sitios.push(body);
         }else{
             var $ = res.$;
@@ -67,6 +67,7 @@ for(var i = omega[0] ; i < omega[1]; i++){
         c.queue([{
             // uri: url,
             uri: urls[i],
+            timeout: 3000,
             jQuery: true,
             userAgent: "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1",
             retries: 0,
