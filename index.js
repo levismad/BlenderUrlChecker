@@ -10,13 +10,6 @@ var sitios = [];
 var omega = process.env.BARRAMENTO.split(",");
 console.log(omega);
 var c = new Crawler({
-    maxConnections : 10000,
-    preRequest: function(options, done) {
-        // 'options' here is not the 'options' you pass to 'c.queue', instead, it's the options that is going to be passed to 'request' module 
-        console.log(options.uri);
-        // when done is called, the request will start
-        done();
-    },
     callback : function (error, res, done) {
         console.log(++current);
         if(error){
@@ -68,7 +61,13 @@ var c = new Crawler({
         done();
     }
 });
-
+c.on('drain',async function(){
+    console.log("done queue");
+    await save();
+});
+c.on('request',function(options){
+    console.log(options.uri);
+});
 for(var i = omega[0] ; i < omega[1]; i++){
     if(!!urls[i]){
         c.queue([{
@@ -83,10 +82,6 @@ for(var i = omega[0] ; i < omega[1]; i++){
         }]);
     }
 }
-c.on('drain',async function(){
-    console.log("done queue");
-    await save();
-});
 
 async function save(){
     try {
