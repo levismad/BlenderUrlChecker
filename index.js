@@ -1,4 +1,5 @@
 var Crawler = require("crawler");
+var {mongoose} = require('./db/mongoose');
 require('./config/config');
 const {Site} = require('./models/site');
 var urls = require('./config/urls.json').urls;
@@ -10,6 +11,12 @@ var omega = process.env.BARRAMENTO.split(",");
 console.log(omega);
 var c = new Crawler({
     maxConnections : 10000,
+    preRequest: function(options, done) {
+        // 'options' here is not the 'options' you pass to 'c.queue', instead, it's the options that is going to be passed to 'request' module 
+        console.log(options.uri);
+        // when done is called, the request will start
+        done();
+    },
     callback : function (error, res, done) {
         console.log(++current);
         if(error){
@@ -67,10 +74,11 @@ for(var i = omega[0] ; i < omega[1]; i++){
         c.queue([{
             // uri: url,
             uri: urls[i],
-            timeout: 3000,
+            timeout: 2000,
             jQuery: true,
             userAgent: "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1",
             retries: 0,
+            rateLimit: 0,
             maxConnections:1
         }]);
     }
@@ -81,16 +89,21 @@ c.on('drain',async function(){
 });
 
 async function save(){
-    var {mongoose} = require('./db/mongoose');
-    for(var i = 0; i < sitios.length; i++){
-        console.log("saving " + i)
-        try {
-            await saveOne(sitios[i]);
-        } catch (error) {
-            
+    try {
+        console.log("connecting mongo");
+        mongoose.connect(process.env.MONGODB_URI);
+        for(var i = 0; i < sitios.length; i++){
+            console.log("saving " + i)
+            try {
+                await saveOne(sitios[i]);
+            } catch (error) {
+            }
         }
+        console.log("discoconnecting mongo");
+        mongoose.connection.close();
+    } catch (error) {
+        await save();
     }
-    mongoose.connection.close();
 }
 function saveOne(body){
     let site = new Site(body);
