@@ -4,7 +4,7 @@ echo "current: "$(env | grep CURRENT)
 currentStr=$(printenv CURRENT)
 current=$(($currentStr + 0))
 default=1000
-for i in {$current..159000..$default}
+for (( i=$current; i<=159000; i+= $default ))
   do
         echo "current: "$current
         sum=$(($default + $i))
