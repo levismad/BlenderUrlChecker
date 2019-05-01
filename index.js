@@ -11,28 +11,27 @@ var omega = process.env.BARRAMENTO.split(",");
 console.log(omega);
 var c = new Crawler({
     callback : function (error, res, done) {
-        console.log(++current);
-        if(error){
+        try{
+            console.log(++current);
             var body = {};
-            body.Url = res.options.uri;
-            body.Online = false;
-            body.RegexRule = destect.join(",");
-            body.Error = JSON.stringify(error);
-            sitios.push(body);
-        }else{
-            var $ = res.$;
-            var body = {};
-            body.Url = res.options.uri;
-            body.HtmlLang = $("html").attr("lang");
-            body.MetaLocale = $("meta[property='og:locale']").attr("content");            
-            body.MatchCount = 0;
-            body.RegexRule = destect.join(",");
-            body.StatusCode = res.statusCode;
-            body.StatusMessage = res.statusMessage;
-            body.Products = [];
-            body.Online = true;
-            
-            try{
+            if(error){
+                body.Url = res.options.uri;
+                body.Online = false;
+                body.RegexRule = destect.join(",");
+                body.Error = JSON.stringify(error);
+                sitios.push(body);
+            }else{
+                var $ = res.$;
+                body.Url = res.options.uri;
+                body.HtmlLang = $("html").attr("lang");
+                body.MetaLocale = $("meta[property='og:locale']").attr("content");            
+                body.MatchCount = 0;
+                body.RegexRule = destect.join(",");
+                body.StatusCode = res.statusCode;
+                body.StatusMessage = res.statusMessage;
+                body.Products = [];
+                body.Online = true;
+                
                 for(var i in destect){
                     var v = destect[i];
                     var regex = new RegExp(`.*${v}.*`, "gi");
@@ -50,14 +49,13 @@ var c = new Crawler({
                     }
                 }
             }
-            catch(e){
-                
-            }
-            finally{                
-                sitios.push(body);
-            }
-            
         }
+        catch(e){
+            console.log(e);
+        }
+        finally{                
+            sitios.push(body);
+        }        
         done();
     }
 });
@@ -89,6 +87,7 @@ async function save(){
             try {
                 await saveOne(sitios[i]);
             } catch (error) {
+                console.log(error);
             }
         }
         console.log("discoconnecting mongo");
