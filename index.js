@@ -77,7 +77,7 @@ for(var i = omega[0] ; i < omega[1]; i++){
             jQuery: true,
             userAgent: "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1",
             retries: 0,
-            rateLimit: 0,
+            rateLimit: 1000,
             maxConnections:1
         }]);
     }
