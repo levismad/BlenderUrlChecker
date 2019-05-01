@@ -1,6 +1,5 @@
 var Crawler = require("crawler");
 require('./config/config');
-var {mongoose} = require('./db/mongoose');
 const {Site} = require('./models/site');
 var urls = require('./config/urls.json').urls;
 var destect = ["compre", "agora","produto","frete","R\\$","promo..o"];
@@ -70,7 +69,8 @@ for(var i = omega[0] ; i < omega[1]; i++){
             uri: urls[i],
             jQuery: true,
             userAgent: "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1",
-            retries: 0
+            retries: 0,
+            maxConnections:1
         }]);
     }
 }
@@ -80,6 +80,7 @@ c.on('drain',async function(){
 });
 
 async function save(){
+    var {mongoose} = require('./db/mongoose');
     for(var i = 0; i < sitios.length; i++){
         console.log("saving " + i)
         try {
