@@ -65,9 +65,6 @@ c.on('drain',async function(){
     console.log("done queue");
     await save();
 });
-c.on('request',function(options){
-    console.log(options.uri);
-});
 for(var i = omega[0] ; i < omega[1]; i++){
     if(!!urls[i]){
         c.queue([{
