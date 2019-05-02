@@ -3,7 +3,7 @@ var {mongoose} = require('./db/mongoose');
 require('./config/config');
 const {Site} = require('./models/site');
 var urls = require('./config/urls.json').urls;
-var destect = ["compre", "agora","produto","frete","R\\$","promo..o"];
+var destect = ["carrinho", "pedido","produto","adicionar","R\\$","entrega","pol.tica","troca","rastrei."];
 var current = 0;
 var sitios = [];
 // var url = process.env.BARRAMENTO;
@@ -18,36 +18,23 @@ var c = new Crawler({
                 body.Url = res.options.uri;
                 body.Online = false;
                 body.RegexRule = destect.join(",");
-                body.Error = JSON.stringify(error);
+                body.Error = error.code || error.reason;
                 // sitios.push(body);
             }else{
                 var $ = res.$;
-                body.Url = res.options.uri;
-                body.HtmlLang = $("html").attr("lang");
-                body.MetaLocale = $("meta[property='og:locale']").attr("content");            
+                body.Url = res.options.uri;      
                 body.MatchCount = 0;
                 body.RegexRule = destect.join(",");
                 body.StatusCode = res.statusCode;
                 body.StatusMessage = res.statusMessage;
-                body.Products = [];
                 body.Online = true;
-                
+                var html = ($('body').html() || "");
                 for(var i in destect){
                     var v = destect[i];
                     var regex = new RegExp(`.*${v}.*`, "gi");
-                    body.MatchCount = body.MatchCount + ((($('body').html() || "").match(regex) || []).length);
+                    body.MatchCount = body.MatchCount + ((html.match(regex) || []).length);
                 };
                 
-                if(body.StatusCode >= 200 && body.StatusCode < 400){
-                    var products = $('a').filter(function(i,v) {
-                        // console.log($(this).attr("href"));
-                        return ($(this).attr("href") || "").indexOf("/products") > -1;
-                    });
-                    
-                    for(var i = 0; i < products.length; i++){
-                        body.Products.push($(products[i]).html());
-                    }
-                }
             }
         }
         catch(e){
@@ -72,8 +59,9 @@ for(var i = omega[0] ; i < omega[1]; i++){
             jQuery: true,
             userAgent: "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1",
             retries: 0,
-            rateLimit: 1000,
-            maxConnections:1
+            rateLimit: 0,
+            maxConnections:500,
+            strictSSL: false
         }]);
     }
 }
