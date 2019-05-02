@@ -55,7 +55,7 @@ for(var i = omega[0] ; i < omega[1]; i++){
         c.queue([{
             // uri: url,
             uri: urls[i],
-            timeout: 2000,
+            // timeout: 2000,
             jQuery: true,
             userAgent: "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1",
             retries: 0,
