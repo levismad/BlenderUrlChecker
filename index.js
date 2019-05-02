@@ -19,7 +19,7 @@ var c = new Crawler({
                 body.Online = false;
                 body.RegexRule = destect.join(",");
                 body.Error = JSON.stringify(error);
-                sitios.push(body);
+                // sitios.push(body);
             }else{
                 var $ = res.$;
                 body.Url = res.options.uri;
